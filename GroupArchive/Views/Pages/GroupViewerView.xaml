@@ -20,39 +20,48 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-
-        <!--  Collection Header  -->
+        <!--  Header  -->
         <ui:TextBlock
             FontTypography="Title"
             Grid.Row="0"
             Margin="24,8"
             Text="{Binding ViewModel.ViewTitle}" />
 
-        <!--  Collection Body  -->
+        <!--  Collection  -->
         <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-            <!--  Collection  -->
+            <!--  Collection Header  -->
+            <ui:Button
+                Appearance="Primary"
+                Command="{Binding ViewModel.LoadButtonClickCommand}"
+                Content="Загрузить"
+                Grid.Row="0"
+                Margin="8"
+                VerticalAlignment="Center">
+                <ui:Button.Icon>
+                    <ui:SymbolIcon Symbol="ArrowDownload24" />
+                </ui:Button.Icon>
+            </ui:Button>
+
+            <!--  Collection Body  -->
             <ListView
-                Grid.Column="1"
+                Grid.Row="1"
                 ItemsSource="{Binding ViewModel.GroupCollection}"
+                Margin="8"
                 SelectedItem="{Binding ViewModel.SelectedGroup}"
                 SelectionMode="Single">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <ui:Card>
-                            <StackPanel>
-                                <ui:TextBlock Text="{Binding Path=Number, StringFormat=Номер группы: {0}}" />
-                                <ui:TextBlock Text="{Binding Path=Сourse, StringFormat=Курс: {0}}" />
-                                <ui:TextBlock Text="{Binding Specialization, StringFormat=Специализация: {0}}" />
-                                <ui:TextBlock Text="{Binding Path=StudyYear, StringFormat=Год обучения: {0:yyyy}}" />
-                            </StackPanel>
-
-                        </ui:Card>
-
+                        <StackPanel Margin="8">
+                            <ui:TextBlock Text="{Binding Path=Number, StringFormat=Номер группы: {0}}" />
+                            <ui:TextBlock Text="{Binding Path=Сourse, StringFormat=Курс: {0}}" />
+                            <ui:TextBlock Text="{Binding Specialization, StringFormat=Специализация: {0}}" />
+                            <ui:TextBlock Text="{Binding Path=StudyYear, StringFormat=Год обучения: {0}}" />
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <b:Interaction.Triggers>

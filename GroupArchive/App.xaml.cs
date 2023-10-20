@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using GroupArchive.Services;
+using GroupArchive.Services.File;
 using GroupArchive.ViewModels;
 using GroupArchive.ViewModels.Pages;
 using GroupArchive.ViewModels.Windows;
@@ -34,6 +35,7 @@ public partial class App : Application
         serviceCollection.AddSingleton<INavService, NavService>();
         serviceCollection.AddSingleton<ISnackbarService, SnackbarService>();
         serviceCollection.AddSingleton<IContentDialogService, ContentDialogService>();
+        serviceCollection.AddSingleton<IFileService, FileService>();
 
         // All other pages and view models
         serviceCollection.AddTransient<GroupViewerView>();

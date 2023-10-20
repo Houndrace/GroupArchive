@@ -8,16 +8,19 @@ using GroupArchive.Services;
 
 namespace GroupArchive.ViewModels.Pages;
 
-public partial class StudentViewModel : ObservableRecipient, IRecipient<ValueChangedMessage<Group>>
+public partial class StudentViewModel : ObservableRecipient,
+    IRecipient<ValueChangedMessage<ObservableCollection<Student>>>, IRecipient<ValueChangedMessage<Group>>
 {
+    private readonly IFileService _fileService;
     private readonly INavService _navService;
     [ObservableProperty] private Group? _receivedGroup;
-    [ObservableProperty] private string _viewTitle = "Список студентов группы ";
     [ObservableProperty] private ObservableCollection<Student>? _studentCollection;
+    [ObservableProperty] private string _viewTitle = "Список студентов группы ";
 
-    public StudentViewModel(INavService navService)
+    public StudentViewModel(INavService navService, IFileService fileService)
     {
         _navService = navService;
+        _fileService = fileService;
         IsActive = true;
 
         InitializeDate();
@@ -36,16 +39,22 @@ public partial class StudentViewModel : ObservableRecipient, IRecipient<ValueCha
             collection.Any(student => student.Group.Specialization == ReceivedGroup.Specialization));
     }
 
+    public void Receive(ValueChangedMessage<ObservableCollection<Student>> message)
+    {
+        StudentCollection = message.Value;
+
+        ViewTitle = $"Загруженная группа {StudentCollection.First().Group.Number}";
+    }
 
     private void InitializeDate()
     {
         GroupCollection = new ObservableCollection<Group>
         {
-            new(new DateOnly(2011, 1, 1), "Информатика", 1, 1),
-            new(new DateOnly(2012, 1, 1), "Математика", 2, 2),
-            new(new DateOnly(2013, 1, 1), "Физика", 3, 3),
-            new(new DateOnly(2014, 1, 1), "Технология", 4, 4),
-            new(new DateOnly(2011, 1, 1), "Прикладная информатика", 5, 1)
+            new("2011", "Информатика", 1, 1),
+            new("2012", "Математика", 2, 2),
+            new("2013", "Физика", 3, 3),
+            new("2014", "Технология", 4, 4),
+            new("2011", "Прикладная информатика", 5, 1)
         };
 
         GroupStudentCollection = new ObservableCollection<ObservableCollection<Student>>
@@ -101,18 +110,24 @@ public partial class StudentViewModel : ObservableRecipient, IRecipient<ValueCha
             },
             new()
             {
-                new("Михайлова Ольга Игоревна", GroupCollection[4]),
-                new("Васильев Игорь Андреевич", GroupCollection[4]),
-                new("Петухова Мария Владимировна", GroupCollection[4]),
-                new("Чернов Алексей Сергеевич", GroupCollection[4]),
-                new("Горшкова Елена Александровна", GroupCollection[4]),
-                new("Кудрявцев Дмитрий Валентинович", GroupCollection[4]),
-                new("Филиппов Андрей Петрович", GroupCollection[4]),
-                new("Зайцев Антон Иванович", GroupCollection[4]),
-                new("Лебедева Анна Александровна", GroupCollection[4]),
-                new("Комиссаров Александр Вячеславович", GroupCollection[4])
+                new Student("Михайлова Ольга Игоревна", GroupCollection[4]),
+                new Student("Васильев Игорь Андреевич", GroupCollection[4]),
+                new Student("Петухова Мария Владимировна", GroupCollection[4]),
+                new Student("Чернов Алексей Сергеевич", GroupCollection[4]),
+                new Student("Горшкова Елена Александровна", GroupCollection[4]),
+                new Student("Кудрявцев Дмитрий Валентинович", GroupCollection[4]),
+                new Student("Филиппов Андрей Петрович", GroupCollection[4]),
+                new Student("Зайцев Антон Иванович", GroupCollection[4]),
+                new Student("Лебедева Анна Александровна", GroupCollection[4]),
+                new Student("Комиссаров Александр Вячеславович", GroupCollection[4])
             }
         };
+    }
+
+    [RelayCommand]
+    private void OnSaveButtonClick()
+    {
+        _fileService.SaveFile("data.xml", StudentCollection);
     }
 
     [RelayCommand]

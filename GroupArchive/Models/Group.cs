@@ -2,7 +2,8 @@
 
 public class Group
 {
-    public Group(DateOnly studyYear, string specialization, int сourse, int number)
+    public Group(){}
+    public Group(string studyYear, string specialization, int сourse, int number)
     {
         StudyYear = studyYear;
         Specialization = specialization ?? throw new ArgumentNullException(nameof(specialization));
@@ -10,7 +11,7 @@ public class Group
         Number = number;
     }
 
-    public DateOnly StudyYear { get; set; }
+    public string StudyYear { get; set; }
     public string Specialization { get; set; }
     public int Сourse { get; set; }
     public int Number { get; set; }

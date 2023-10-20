@@ -11,14 +11,16 @@ namespace GroupArchive.ViewModels;
 
 public partial class GroupViewerViewModel : ObservableRecipient
 {
+    private readonly IFileService _fileService;
     private readonly INavService _navService;
     [ObservableProperty] private Group? _selectedGroup;
     [ObservableProperty] private string _viewTitle = "Список групп";
 
 
-    public GroupViewerViewModel(INavService navService)
+    public GroupViewerViewModel(INavService navService, IFileService fileService)
     {
         _navService = navService;
+        _fileService = fileService;
 
         InitializeData();
     }
@@ -30,11 +32,11 @@ public partial class GroupViewerViewModel : ObservableRecipient
     {
         GroupCollection = new ObservableCollection<Group>
         {
-            new(new DateOnly(2011, 1, 1), "Информатика", 1, 1),
-            new(new DateOnly(2012, 1, 1), "Математика", 2, 2),
-            new(new DateOnly(2013, 1, 1), "Физика", 3, 3),
-            new(new DateOnly(2014, 1, 1), "Технология", 4, 4),
-            new(new DateOnly(2011, 1, 1), "Прикладная информатика", 5, 1)
+            new("2011", "Информатика", 1, 1),
+            new("2012", "Математика", 2, 2),
+            new("2013", "Физика", 3, 3),
+            new("2014", "Технология", 4, 4),
+            new("2011", "Прикладная информатика", 5, 1)
         };
     }
 
@@ -45,5 +47,19 @@ public partial class GroupViewerViewModel : ObservableRecipient
 
         _navService.Navigate<StudentView>();
         Messenger.Send(new ValueChangedMessage<Group>(SelectedGroup));
+    }
+
+    [RelayCommand]
+    private void OnLoadButtonClick()
+    {
+        _fileService.LoadFile<ObservableCollection<Student>>("data.xml");
+
+        var loadedStudentCollection = _fileService.Content as ObservableCollection<Student>;
+
+        if (loadedStudentCollection is null)
+            return;
+
+        _navService.Navigate<StudentView>();
+        Messenger.Send(new ValueChangedMessage<ObservableCollection<Student>>(loadedStudentCollection));
     }
 }

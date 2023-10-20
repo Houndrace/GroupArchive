@@ -2,6 +2,8 @@
 
 public class Student
 {
+    public Student(){}
+    
     public Student(string name, Group group)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));

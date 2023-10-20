@@ -1,67 +1,62 @@
-using System.Diagnostics;
-using System.Windows;
-using GroupArchive.ViewModels.Pages;
-using Application = TestStack.White.Application;
+using GroupArchive.Services.File;
+using TestStack.White;
 
 namespace GroupArchive.NUnit;
 
 public class Tests
 {
+    private const string AppLocation =
+        "D:\\GitHub\\GroupArchive\\GroupArchive\\bin\\Debug\\net6.0-windows\\GroupArchive.exe";
+
+    private const string DataLocation = "D:\\GitHub\\GroupArchive\\GroupArchive\\bin\\Debug\\net6.0-windows\\data.xaml";
     private Application _app;
+    private FileService _fileService;
+
     [SetUp]
     public void Setup()
     {
-        _app = TestStack.White.Application.Launch("D:\\GitHub\\GroupArchive\\GroupArchive\\bin\\Debug\\net6.0-windows\\GroupArchive.exe");
-        
+        _fileService = new FileService();
     }
 
     [Test]
     public void TestLoadWindow()
     {
+        _app = Application.Launch(AppLocation);
         var window = _app.GetWindows()[0];
-        
+
         Assert.IsNotNull(window);
-        
+
         _app.Kill();
     }
-    
+
     [Test]
     public void TestLoadFile()
     {
-        var window = _app.GetWindows()[0];
-        
-        Assert.IsNotNull(window);
-        
-        _app.Kill();
-    }
-    
+        Assert.IsTrue(_fileService.LoadFile<string>(DataLocation));
+    } 
+
     [Test]
     public void TestLoadFileNot()
     {
-        var window = _app.GetWindows()[0];
+        var code = new TestDelegate(() =>
+        {
+            _fileService.LoadFile<Type>("не существующий путь");
+        });
         
-        Assert.IsNotNull(window);
-        
-        _app.Kill();
+        Assert.Catch(typeof(FileNotFoundException), code);
     }
-    
+
     [Test]
     public void TestSaveFile()
     {
-        var window = _app.GetWindows()[0];
-        
-        Assert.IsNotNull(window);
-        
-        _app.Kill();
+        var testData = "test";
+        Assert.IsTrue(_fileService.SaveFile(DataLocation, testData));
     }
-    
+
     [Test]
     public void TestSaveFileNot()
     {
-        var window = _app.GetWindows()[0];
-        
-        Assert.IsNotNull(window);
-        
-        _app.Kill();
+        var testData = "test";
+        Assert.IsTrue(_fileService.SaveFile("fasdfs.ffff", testData));
     }
 }
